@@ -1,7 +1,6 @@
 package md5
 
 import (
-    "fmt"
     "testing"
 )
 
@@ -24,14 +23,13 @@ var md5s = [7]string{
     "57edf4a22be3c955ac49da2e2107b67a",
 }
 
-func TestAll(t *testing.T) {
+func TestMD5(t *testing.T) {
     md5 := MD5{}
 
     l := len(input)
     for i := 0; i < l; i++ {
         md5.Digest([]byte(input[i]))
         if md5.Hex() != md5s[i]  {
-            fmt.Println(input[i], " ", md5s[i], " ", md5.Hex())
             t.FailNow()
         }
     }

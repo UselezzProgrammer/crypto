@@ -1,6 +1,7 @@
 package hmac
 
 import (
+    "encoding/hex"
     "errors"
     "fmt"
     "mycrypto"
@@ -15,9 +16,10 @@ type Hmac struct {
     ipad, opad []byte
 }
 
-func (hmac *Hmac) New(hashAlg string, key []byte) error {
+func New(hashAlg string, key []byte) (*Hmac, error) {
+    hmac := &Hmac{}
     if err := hmac.setHash(hashAlg); err != nil {
-        return err
+        return nil, err
     }
     hmac.hashAlg = hashAlg
 
@@ -37,7 +39,7 @@ func (hmac *Hmac) New(hashAlg string, key []byte) error {
         hmac.opad[i] ^= 0x5C
     }
 
-    return nil
+    return hmac, nil
 }
 
 func (hmac *Hmac) setHash(hashAlg string) error {
@@ -54,10 +56,6 @@ func (hmac *Hmac) setHash(hashAlg string) error {
         hmac.hash = sha.NewSHA384()
     case "sha512":
         hmac.hash = sha.NewSHA512()
-    case "sha512224":
-        hmac.hash = sha.NewSHA512t("224")
-    case "sha512256":
-        hmac.hash = sha.NewSHA512t("256")
     default:
         return errors.New(fmt.Sprintf("unsupported hash algorithm: %s", hashAlg))
     }
@@ -73,4 +71,8 @@ func (hmac *Hmac) Digest(m []byte) {
 
 func (hmac *Hmac) Binary() []byte {
     return hmac.hash.Binary()
+}
+
+func (hmac *Hmac) Hex() string {
+    return hex.EncodeToString(hmac.Binary())
 }
